@@ -1,2 +1,55 @@
 ---
-# tasks file for ansible-role-pihole
+- name: Install dependencies
+  pacman:
+    name: php-sqlite php-cgi lighttpd
+    state: present
+
+- name: Install Pi-hole server
+  become: true
+  become_user: aurmake
+  aur:
+    name: pi-hole-server
+
+- name: Set up PHP
+  lineinfile:
+    path: /etc/php/php.ini
+    regexp: ";{{ item }}"
+    line: "{{ item }}"
+  loop:
+    - "extension=pdo_sqlite"
+    - "extension=sockets"
+    - "extension=sqlite3"
+  notify: "restart lighttpd"
+
+- name: Optimize for solid state drives
+  lineinfile:
+    path: /etc/pihole/pihole-FTL.conf
+    regexp: "#DBINTERVAL"
+    line: "DBINTERVAL=60.0"
+  notify: "restart pihole-FTL"
+
+- name: Set up lighttpd
+  copy:
+    src: /usr/share/pihole/configs/lighttpd.example.conf
+    dest: /etc/lighttpd/lighttpd.conf
+    remote_src: true
+  notify: "restart lighttpd"
+
+- name: Disable systemd-resolved
+  service:
+    name: systemd-resolved
+    enabled: false
+    state: stopped
+  notify: "restart lighttpd"
+
+- name: Enable Pi-hole FTL
+  service:
+    name: pihole-FTL
+    enabled: true
+    state: started
+
+- name: Enable lighttpd
+  service:
+    name: lighttpd
+    enabled: true
+    state: started
