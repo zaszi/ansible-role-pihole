@@ -4,7 +4,7 @@ Deploys and configures [Pi-hole](https://pi-hole.net/).
 
 ## Requirements
 
-None.
+To install Arch Linux packages, this role relies on the pacman module of the community general collection. Install it with `ansible-galaxy collection install community.general`.
 
 ## Role Variables
 

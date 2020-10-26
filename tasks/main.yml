@@ -1,7 +1,10 @@
 ---
 - name: Install dependencies
-  pacman:
-    name: php-sqlite php-cgi lighttpd
+  community.general.pacman:
+    name:
+      - php-sqlite
+      - php-cgi
+      - lighttpd
     state: present
 
 - name: Install Pi-hole server
