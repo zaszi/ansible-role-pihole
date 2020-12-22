@@ -23,4 +23,4 @@ None.
 
 ## License
 
-Ansible-role-pihole is licensed under the [MIT license](https://github.com/zaszi/ansible-role-pihol/blob/master/LICENSE.md).
+Ansible-role-pihole is licensed under the [MIT license](https://github.com/zaszi/ansible-role-pihol/blob/master/LICENSE).
