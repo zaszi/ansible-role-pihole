@@ -2,9 +2,10 @@
 - name: Install dependencies
   community.general.pacman:
     name:
-      - php-sqlite
+      - nginx-mainline
       - php-cgi
-      - lighttpd
+      - php-fpm
+      - php-sqlite
     state: present
 
 - name: Install Pi-hole server
@@ -22,7 +23,13 @@
     - "extension=pdo_sqlite"
     - "extension=sockets"
     - "extension=sqlite3"
-  notify: "restart lighttpd"
+  notify: "reload nginx"
+
+- name: Set up nginx virtual host
+  copy:
+    src: pihole.conf
+    dest: /etc/nginx/sites-available/pihole.conf
+  notify: "reload nginx"
 
 - name: Optimize for solid state drives
   lineinfile:
@@ -31,28 +38,54 @@
     line: "DBINTERVAL=60.0"
   notify: "restart pihole-FTL"
 
-- name: Set up lighttpd
+- name: Limit maximum log period to a month
+  lineinfile:
+    path: /etc/pihole/pihole-FTL.conf
+    regexp: "#MAXDBDAYS"
+    line: "MAXDBDAYS=60"
+  notify: "restart pihole-FTL"
+
+- name: Ensure /etc/systemd/system/php-fpm.service.d/ exists
+  file:
+    path: "/etc/systemd/system/php-fpm.service.d/"
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+
+- name: Install PHP-FPM unit file
   copy:
-    src: /usr/share/pihole/configs/lighttpd.example.conf
-    dest: /etc/lighttpd/lighttpd.conf
-    remote_src: true
-  notify: "restart lighttpd"
+    src: php-fpm.service
+    dest: /etc/systemd/system/php-fpm.service.d/pihole.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: true
 
 - name: Disable systemd-resolved
   service:
     name: systemd-resolved
     enabled: false
     state: stopped
-  notify: "restart lighttpd"
+  notify: "reload nginx"
+
+- name: Enable PHP-FPM
+  service:
+    name: php-fpm
+    enabled: true
+    state: started
+
+- name: Enable nginx
+  service:
+    name: nginx
+    enabled: true
+    state: started
 
 - name: Enable Pi-hole FTL
   service:
     name: pihole-FTL
-    enabled: true
-    state: started
-
-- name: Enable lighttpd
-  service:
-    name: lighttpd
     enabled: true
     state: started

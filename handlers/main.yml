@@ -1,9 +1,15 @@
 ---
-- name: Reload lighttpd
+- name: Reload PHP-FPM
   service:
-    name: lighttpd
+    name: php-fpm
     state: restarted
-  listen: "restart lighttpd"
+  listen: "restart php-fpm"
+
+- name: Reload nginx
+  service:
+    name: nginx
+    state: reloaded
+  listen: "reload nginx"
 
 - name: Reload pihole-FTL
   service:
