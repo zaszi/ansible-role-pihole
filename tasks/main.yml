@@ -15,7 +15,7 @@
     name: pi-hole-server
 
 - name: Set up PHP
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/php/php.ini
     regexp: ";{{ item }}"
     line: "{{ item }}"
@@ -26,27 +26,30 @@
   notify: "reload nginx"
 
 - name: Set up nginx virtual host
-  copy:
+  ansible.builtin.copy:
     src: pihole.conf
     dest: /etc/nginx/sites-available/pihole.conf
+    owner: root
+    group: root
+    mode: 0644
   notify: "reload nginx"
 
 - name: Optimize for solid state drives
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/pihole/pihole-FTL.conf
     regexp: "#DBINTERVAL"
     line: "DBINTERVAL=60.0"
   notify: "restart pihole-FTL"
 
 - name: Limit maximum log period to a month
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/pihole/pihole-FTL.conf
     regexp: "#MAXDBDAYS"
     line: "MAXDBDAYS=60"
   notify: "restart pihole-FTL"
 
 - name: Ensure /etc/systemd/system/php-fpm.service.d/ exists
-  file:
+  ansible.builtin.file:
     path: "/etc/systemd/system/php-fpm.service.d/"
     owner: root
     group: root
@@ -54,7 +57,7 @@
     state: directory
 
 - name: Install PHP-FPM unit file
-  copy:
+  ansible.builtin.copy:
     src: php-fpm.service
     dest: /etc/systemd/system/php-fpm.service.d/pihole.conf
     owner: root
@@ -62,30 +65,30 @@
     mode: 0644
 
 - name: Reload systemd daemon
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
 
 - name: Disable systemd-resolved
-  service:
+  ansible.builtin.service:
     name: systemd-resolved
     enabled: false
     state: stopped
   notify: "reload nginx"
 
 - name: Enable PHP-FPM
-  service:
+  ansible.builtin.service:
     name: php-fpm
     enabled: true
     state: started
 
 - name: Enable nginx
-  service:
+  ansible.builtin.service:
     name: nginx
     enabled: true
     state: started
 
 - name: Enable Pi-hole FTL
-  service:
+  ansible.builtin.service:
     name: pihole-FTL
     enabled: true
     state: started
