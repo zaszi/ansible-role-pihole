@@ -12,7 +12,7 @@ None.
 
 ## Dependencies
 
-None.
+This role requires my [ansible-role-nginx](https://github.com/zaszi/ansible-role-nginx) to be run previous to this.
 
 ## Example Playbook
 
