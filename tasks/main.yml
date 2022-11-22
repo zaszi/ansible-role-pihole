@@ -2,7 +2,6 @@
 - name: Install dependencies
   community.general.pacman:
     name:
-      - nginx-mainline
       - php-cgi
       - php-fpm
       - php-sqlite
@@ -86,12 +85,6 @@
 - name: Enable PHP-FPM
   ansible.builtin.service:
     name: php-fpm
-    enabled: true
-    state: started
-
-- name: Enable nginx
-  ansible.builtin.service:
-    name: nginx
     enabled: true
     state: started
 
