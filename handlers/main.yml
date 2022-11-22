@@ -16,3 +16,10 @@
     name: pihole-FTL
     state: restarted
   listen: "restart pihole-FTL"
+
+- name: Restart systemd-resolved
+  ansible.builtin.service:
+    name: systemd-resolved
+    state: restarted
+  listen: "restart systemd-resolved"
+

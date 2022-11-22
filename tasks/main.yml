@@ -8,6 +8,14 @@
       - php-sqlite
     state: present
 
+- name: Disable systemd-resolved stub listener
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: "DNSStubListener="
+    line: "DNSStubListener=no"
+  notify: "restart systemd-resolved"
+  when: dns|bool
+
 - name: Install Pi-hole server
   become: true
   become_user: aurmake
