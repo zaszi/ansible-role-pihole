@@ -1,25 +1,24 @@
 ---
 - name: Reload PHP-FPM
   ansible.builtin.service:
-    name: php-fpm
+    name: php-fpm.service
     state: restarted
   listen: "restart php-fpm"
 
 - name: Reload nginx
   ansible.builtin.service:
-    name: nginx
+    name: nginx.service
     state: reloaded
   listen: "reload nginx"
 
 - name: Reload pihole-FTL
   ansible.builtin.service:
-    name: pihole-FTL
+    name: pihole-FTL.service
     state: restarted
   listen: "restart pihole-FTL"
 
 - name: Restart systemd-resolved
   ansible.builtin.service:
-    name: systemd-resolved
+    name: systemd-resolved.service
     state: restarted
   listen: "restart systemd-resolved"
-
