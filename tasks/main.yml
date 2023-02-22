@@ -75,13 +75,6 @@
   ansible.builtin.systemd:
     daemon_reload: true
 
-- name: Disable systemd-resolved
-  ansible.builtin.service:
-    name: systemd-resolved
-    enabled: false
-    state: stopped
-  notify: "reload nginx"
-
 - name: Enable PHP-FPM
   ansible.builtin.service:
     name: php-fpm
