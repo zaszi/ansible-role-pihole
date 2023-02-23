@@ -13,13 +13,20 @@
     regexp: "DNSStubListener="
     line: "DNSStubListener=no"
   notify: "restart systemd-resolved"
-  when: dns|bool
 
 - name: Install Pi-hole server
   become: true
   become_user: aurmake
   aur:
     name: pi-hole-server
+
+- name: Recursively change ownership of the Pi-hole web directory
+  ansible.builtin.file:
+    path: /srv/http/pihole
+    state: directory
+    recurse: true
+    owner: root
+    group: http
 
 - name: Set up PHP
   ansible.builtin.lineinfile:
