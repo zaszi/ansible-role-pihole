@@ -51,14 +51,14 @@
 - name: Optimize for solid state drives
   ansible.builtin.lineinfile:
     path: /etc/pihole/pihole-FTL.conf
-    regexp: "#DBINTERVAL"
+    regexp: "#; DBINTERVAL"
     line: "DBINTERVAL=60.0"
   notify: "restart pihole-FTL"
 
 - name: Limit maximum log period to a month
   ansible.builtin.lineinfile:
     path: /etc/pihole/pihole-FTL.conf
-    regexp: "#MAXDBDAYS"
+    regexp: "#; MAXDBDAYS"
     line: "MAXDBDAYS=60"
   notify: "restart pihole-FTL"
 
